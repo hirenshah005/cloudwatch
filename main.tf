@@ -15,12 +15,18 @@ data "aws_instances" "all_ec2" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
-  count               = "${length(data.aws_instances.all_ec2.ids)}"
-  alarm_name          = "ec2-cpu-usage-above-75-${data.aws_instances.all_ec2.ids[count.index]}"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "2"
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = "300"
-  threshold           = "75"
+  count                     = "${length(data.aws_instances.all_ec2.ids)}"
+  alarm_name                = "ec2-cpu-usage-above-75-${data.aws_instances.all_ec2.ids[count.index]}"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = "300"
+  threshold                 = "75"
+  alarm_description         = "This alarm will trigger when CPU usage will go above 75%"
+  insufficient_data_actions = []
+
+  dimensions {
+    InstanceId = "${element(data.aws_instances.all_ec2.ids, count.index)}"
+  }
 }
