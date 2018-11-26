@@ -7,6 +7,11 @@ provider "aws" {
 
 data "aws_instances" "all_ec2" {
   instance_state_names = ["running", "stopped"]
+
+  filter {
+    name   = "vpc-id"
+    values = ["${var.vpc_id}"]
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
