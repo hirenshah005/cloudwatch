@@ -29,7 +29,8 @@ resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
 }
 
 data "aws_instance" "x" {
-  count = "${length(data.aws_instances.all_ec2.ids)}"
+  count       = "${length(data.aws_instances.all_ec2.ids)}"
+  instance_id = "${data.aws_instances.all_ec2.*.id}"
 }
 
 #------------Disk Alarms------------------
