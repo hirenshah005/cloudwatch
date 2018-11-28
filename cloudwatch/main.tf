@@ -7,6 +7,7 @@ data "aws_instances" "all_ec2" {
   }
 }
 
+#-----------CPU Alarms----------------------------
 resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
   count                     = "${length(data.aws_instances.all_ec2.ids)}"
   alarm_name                = "ec2-cpu-usage-above-85-${data.aws_instances.all_ec2.ids[count.index]}"
@@ -24,5 +25,26 @@ resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
   }
 
   alarm_description = "This alarm will trigger when CPU usage will go above 85% on --> ${data.aws_instances.all_ec2.ids[count.index]}"
+  alarm_actions     = ["${var.sns_notification_arn}"]
+}
+
+#------------Disk Alarms------------------
+resource "aws_cloudwatch_metric_alarm" "disk_used_percent" {
+  count                     = "${length(data.aws_instances.all_ec2.ids)}"
+  alarm_name                = "Disk_used_percent_below_10%_on-${data.aws_instances.all_ec2.ids[count.index]}"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  datapoints_to_alarm       = "2"
+  metric_name               = "disk_used_percent"
+  namespace                 = "Custim/CWAgent"
+  period                    = "900"
+  threshold                 = "10"
+  insufficient_data_actions = []
+
+  dimensions {
+    InstanceId = "${element(data.aws_instances.all_ec2.ids, count.index)}"
+  }
+
+  alarm_description = "This alarm will trigger when usable EBS storage is below 10% on --> ${data.aws_instances.all_ec2.ids[count.index]}"
   alarm_actions     = ["${var.sns_notification_arn}"]
 }
