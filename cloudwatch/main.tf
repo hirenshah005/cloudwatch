@@ -30,8 +30,8 @@ resource "aws_cloudwatch_metric_alarm" "ec2-high-cpu" {
 
 #------------Disk Alarms------------------
 resource "aws_cloudwatch_metric_alarm" "disk_used_percent" {
-  count                     = "${length(data.aws_instances.all_ec2.ids)}"
-  alarm_name                = "Disk_used_percent_below_10%_on-${data.aws_instances.all_ec2.ids[count.index]}"
+  #count                     = "${length(data.aws_instances.all_ec2.ids)}"
+  alarm_name                = "Disk_used_percent_below_10%" #_on-${data.aws_instances.all_ec2.ids[count.index]}"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   datapoints_to_alarm       = "2"
