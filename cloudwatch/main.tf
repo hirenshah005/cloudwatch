@@ -35,7 +35,7 @@ data "aws_instance" "x" {
 
 #------------Disk Alarms------------------
 resource "aws_cloudwatch_metric_alarm" "disk_used_percent" {
-  count                     = "${length(data.aws_instance.x.ebs_block_device)}"
+  count                     = "${length(data.aws_instance.x.*.ebs_block_device)}"
   alarm_name                = "Disk_used_percent_below_10%_on-${data.aws_instance.x.id}" #"-${element(data.aws_instance.x.ebs_block_device.device_name, count.index)}"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
